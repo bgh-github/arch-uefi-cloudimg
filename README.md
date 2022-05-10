@@ -1,8 +1,8 @@
 # Arch UEFI Cloud Image (arch-uefi-cloudimg)
 
-A (unofficial) mimimal, [cloud-init](https://cloudinit.readthedocs.io) enabled [Arch Linux](https://archlinux.org) virtual machine image build for UEFI booting on latest generation VM hardware.
+A (unofficial) minimal, [cloud-init](https://cloudinit.readthedocs.io) enabled [Arch Linux](https://archlinux.org) virtual machine image build for UEFI booting on latest generation VM hardware.
 
-The intended image runtime target is "modern" specification [Proxmox VE](https://www.proxmox.com/proxmox-ve) (or more generally [QEMU](https://www.qemu.org)/KVM) VM hardware. Specifically, QEMU VMs configured with UEFI (OVMF) boot, Q35 chipset, paravirtualised VirtIO storage and network etc.
+The runtime target for arch-uefi-cloudimg is "modern" specification [Proxmox VE](https://www.proxmox.com/proxmox-ve) (or more generally [QEMU](https://www.qemu.org)/KVM) VM hardware. Specifically, QEMU VMs configured with UEFI (OVMF) boot, Q35 chipset, paravirtualised VirtIO storage and network etc.
 
 ## Download
 
@@ -20,15 +20,15 @@ sha512sum --check arch-uefi-cloudimg.qcow2.sha512sum
 
 [![Refresh image](../../actions/workflows/main.yml/badge.svg)](../../actions/workflows/main.yml)
 
-The above GitHub Actions workflow automatically refreshes the image around UTC+0 each day. Downloads will remain openly available so long as CDN bandwidth costs don't get out of hand.
+The above GitHub Actions workflow automatically refreshes the image around midnight UTC+0 each day. Downloads will remain openly available so long as CDN bandwidth costs don't get out of hand.
 
 > :warning: It mostly goes without saying, but a quick disclaimer: files are provided as-is for non-mission-critical use. They should not be relied upon, and at times may be broken
 
 ## Local Build
 
-On an Arch-based machine, it should also be possible to generate the image locally by executing `./build-img.sh <output_path>`, e.g. `./build-img.sh /tmp/arch-uefi-cloudimg`.
+It should also be possible to generate the image locally by executing `./build-img.sh <output_path>` on an Arch-based machine. For example, `./build-img.sh /tmp/arch-uefi-cloudimg`.
 
-The machine running the build must have internet connectivity and the following packages installed at a minimum - `gptfdisk`, `base-devel`/`sudo`, `dosfstools`, `arch-install-scripts`, `qemu`.
+The machine running the build must have internet connectivity and the following packages installed at a minimum - `gptfdisk`, `base-devel`/`sudo`, `dosfstools`, `arch-install-scripts`, `qemu-img`.
 
 ## What's Included
 
@@ -39,15 +39,15 @@ In the Arch [spirit](https://wiki.archlinux.org/title/Arch_Linux#Principles) of 
 Typically, the VM provisioning process would go something like
 
 1. Use cloud-init to prime the absolute essentials for the environment, such as network configuration, SSH keys, and any management agents
-2. Once the VM is in a manageable state, have a configuration management tool handle all subsequent configuration
+2. Once the VM is in a manageable state, have a configuration management tool handle subsequent setup
 
 In this way, arch-uefi-cloudimg is intentionally a blank canvas.
 
-The slightly opinionated part is perhaps the eschewment of "legacy" technologies and including `zram-generator`. On balance, this seems reasonable with consensus on the age-old "to swap or not to swap" question appearing to converge towards zram (see [Fedora change](https://fedoraproject.org/wiki/Changes/SwapOnZRAM)), zram being relatively trivial to disable post-provisioning, no upfront partitioning implications, and the assumption modern virtualised workloads would be flash storage backed.
+The slightly opinionated part is perhaps the eschewment of "legacy" technologies and including `zram-generator`. On balance, this seemed reasonable with consensus on the age-old "to swap or not to swap" question appearing to converge towards zram (see [Fedora change](https://fedoraproject.org/wiki/Changes/SwapOnZRAM)), zram being relatively trivial to disable post-provisioning, no upfront partitioning implications, and the assumption modern virtualised workloads would be flash storage backed.
 
 ## Running
 
-With the image downloaded (and verified), it's now time to spin up a VM. Command line examples provided below for Proxmox VE and local QEMU. These same principles can be adapted to deployment tooling/APIs as appropriate.
+With the image downloaded (and verified), it's now time to spin up a VM. Command line examples provided below for Proxmox VE and local QEMU. These same principles can be adapted to various deployment tooling/APIs as appropriate.
 
 <details>
   <summary>Proxmox VE</summary>
@@ -183,7 +183,7 @@ In either case
 
 The official source of cloud-ready Arch VM images. This was the first thing I turned up in the search for a ready to run Arch cloud image.
 
-Testing, I discovered the images are currenly only BIOS (MBR) compatible and wouldn't boot on my chosen VM hardware.
+Testing, I discovered the images are currently only BIOS (MBR) compatible and wouldn't boot on my chosen VM hardware.
 
 Finding an [open issue](https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/141) about adding hybrid BIOS+UEFI support, I set out to see if this was something I could tackle. Eventually coming to the realisation that, given my requirements, the added complexity to maintain legacy BIOS support and fiddling with GRUB (when simpler UEFI-only boot loader alternatives like systemd-boot exist) etc. wasn't something I wanted to pursue.
 
@@ -197,6 +197,6 @@ If it hadn't of been for archinstall I mightn't have got my original start with 
 
 A utility under the systemd project banner used to create custom operating system images.
 
-I stumbled upon this very late just prior to wrapping up work on arch-uefi-cloudimg. The tool appears to provide a high degree of flexibility if the goal is to build images for several OS variants. Another plus it being built with an eye towards systemd-nspawn containers and secure boot. It also appears to share a similar ["legacy-free"](https://0pointer.net/blog/mkosi-a-tool-for-generating-os-images.html) philosophy to arch-uefi-cloudimg.
+I stumbled upon this very late just prior to wrapping up work on arch-uefi-cloudimg. The tool appears to provide a high degree of flexibility if the goal is to build images for several OS flavours. Another plus it being built with an eye towards systemd-nspawn containers and secure boot. It also appears to share a similar ["legacy-free"](https://0pointer.net/blog/mkosi-a-tool-for-generating-os-images.html) philosophy to arch-uefi-cloudimg.
 
 While yet to properly explore mkosi, I'd like to think arch-uefi-cloudimg still has its place in striking a balance between aligning to the official ArchWiki [Installation guide](https://wiki.archlinux.org/title/installation_guide) and doing what's necessary to automate modern cloud-ready Arch Linux VM image creation.
