@@ -24,7 +24,7 @@ systemctl enable systemd-networkd.service systemd-resolved.service cloud-init.se
 sed --in-place --expression='s/^MODULES=(\(.*\))/MODULES=(\1 virtio-pci virtio-scsi)/' --expression='s/(\s/(/' /etc/mkinitcpio.conf
 sed --in-place --expression='s/^HOOKS=(base\(.*\))/HOOKS=(base systemd\1)/' /etc/mkinitcpio.conf
 mkinitcpio -P
-bootctl install #--entry-token=$(grep --perl-regexp --only-matching '^ID=\K.*' /etc/os-release | tr --delete '"')
+bootctl install
 echo "timeout 1" > /boot/loader/loader.conf
 cat > "/boot/loader/entries/$(grep --perl-regexp --only-matching '^ID=\K.*' /etc/os-release | sed --expression='s/^"//' --expression='s/"$//').conf" << EOF
 title $(grep --perl-regexp --only-matching '^PRETTY_NAME=\K.*' /etc/os-release | sed --expression='s/^"//' --expression='s/"$//')
