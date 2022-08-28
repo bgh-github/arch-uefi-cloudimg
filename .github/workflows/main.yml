@@ -16,7 +16,7 @@ jobs:
     steps:
      - uses: actions/checkout@v3
      - name: Install build packages
-       run: pacman --sync --refresh --sysupgrade gptfdisk base-devel dosfstools arch-install-scripts qemu-img --noconfirm
+       run: pacman --sync --sysupgrade --refresh --noconfirm gptfdisk base-devel dosfstools arch-install-scripts qemu-img
      - name: Build image
        run: |
          chmod +x ./build-img.sh
