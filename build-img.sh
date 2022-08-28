@@ -12,6 +12,8 @@ sudo losetup --partscan "${loop_dev}" "${output_path}"
 sudo mkfs.fat -F 32 "${loop_dev}p1"
 sudo mkfs.ext4 "${loop_dev}p2"
 
+sudo partprobe ${loop_dev}
+
 sudo mount --mkdir "${loop_dev}p1" "${output_dir}/mount/boot"
 sudo mount --mkdir "${loop_dev}p2" "${output_dir}/mount/img"
 sudo mount --mkdir --bind "${output_dir}/mount/boot" "${output_dir}/mount/img/boot"
