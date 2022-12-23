@@ -5,13 +5,12 @@ output_dir=$(dirname "$output_path")
 output_file=$(basename "$output_path")
 
 truncate --size=2G "${output_path}"
-sgdisk --clear --new 1::+300M --typecode=1:ef00 --new 2::-0 --typecode=2:8304 "${output_path}"
+sgdisk --clear --new 0:0:+300M --typecode=0:ef00 --new 0:0:0 --typecode=0:8304 "${output_path}"
 
 loop_dev=/dev/loop123
 sudo losetup --partscan "${loop_dev}" "${output_path}"
 sudo mkfs.fat -F 32 "${loop_dev}p1"
 sudo mkfs.ext4 "${loop_dev}p2"
-
 sudo partprobe ${loop_dev}
 
 sudo mount --mkdir "${loop_dev}p1" "${output_dir}/mount/boot"
