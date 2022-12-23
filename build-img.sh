@@ -28,14 +28,13 @@ sed --in-place --expression='s/^HOOKS=(base\(.*\))/HOOKS=(base systemd\1)/' /etc
 mkinitcpio -P
 bootctl install
 echo "timeout 1" > /boot/loader/loader.conf
-cat > "/boot/loader/entries/$(grep --perl-regexp --only-matching '^ID=\K.*' /etc/os-release | sed --expression='s/^"//' --expression='s/"$//').conf" << EOF
+cat > "/boot/loader/entries/$(grep --perl-regexp --only-matching '^ID=\K.*' /etc/os-release).conf" << EOF
 title $(grep --perl-regexp --only-matching '^PRETTY_NAME=\K.*' /etc/os-release | sed --expression='s/^"//' --expression='s/"$//')
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
 EOF
 sed --in-place --expression='s/.*/uninitialized/' /etc/machine-id
-echo "IMAGE_ID=${output_file}" >> /etc/os-release
-echo "IMAGE_VERSION=$(date --utc --iso-8601=minutes)" >> /etc/os-release
+echo "BUILD_ID=${output_file}-$(date --utc --iso-8601=minutes)" >> /etc/os-release
 EOM
 
 sudo umount "${output_dir}/mount/img/boot" && sudo rmdir "${output_dir}/mount/img/boot"
