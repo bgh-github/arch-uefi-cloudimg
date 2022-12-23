@@ -1,8 +1,8 @@
 #!/bin/bash
 
-output_path=$1
-output_dir=$(dirname "$output_path")
-output_file=$(basename "$output_path")
+output_path=${1}
+output_dir=$(dirname "${output_path}")
+output_file=$(basename "${output_path}")
 
 truncate --size=2G "${output_path}"
 sgdisk --clear --new 0:0:+300M --typecode=0:ef00 --new 0:0:0 --typecode=0:8304 "${output_path}"
