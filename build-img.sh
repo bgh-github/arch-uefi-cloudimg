@@ -27,7 +27,6 @@ sed --in-place --expression='s/^MODULES=(\(.*\))/MODULES=(\1 virtio-pci virtio-s
 sed --in-place --expression='s/^HOOKS=(base\(.*\))/HOOKS=(base systemd\1)/' /etc/mkinitcpio.conf
 mkinitcpio -P
 bootctl install
-echo "timeout 1" > /boot/loader/loader.conf
 cat > "/boot/loader/entries/$(grep --perl-regexp --only-matching '^ID=\K.*' /etc/os-release).conf" << EOF
 title $(grep --perl-regexp --only-matching '^PRETTY_NAME=\K.*' /etc/os-release | sed --expression='s/^"//' --expression='s/"$//')
 linux /vmlinuz-linux
