@@ -40,6 +40,6 @@ EOM
 
 sudo umount "${output_dir}/mount/img/boot" && sudo rmdir "${output_dir}/mount/img/boot"
 sudo umount "${output_dir}/mount/boot" && sudo rmdir "${output_dir}/mount/boot"
-sudo umount "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount/img"
+sudo umount "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount"
 
 qemu-img convert -c -O qcow2 "${output_path}" "${output_path}.qcow2"
