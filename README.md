@@ -6,14 +6,14 @@ The runtime target for arch-uefi-cloudimg is "modern" specification [Proxmox VE]
 
 ## Download
 
-**[Image Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2)** (compressed qcow2 format)  
+**[Image Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2)** (compressed qcow2 format)
 **[Checksum Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha512sum)** to verify
 
 ```bash
 cd "${HOME}/Downloads" || exit
 
-curl --remote-name --remote-header-name --location https://cdn.bgh.io/arch-uefi-cloudimg.qcow2
-curl --remote-name --remote-header-name --location https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha512sum
+curl --remote-name --location https://cdn.bgh.io/arch-uefi-cloudimg.qcow2
+curl --remote-name --location https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha512sum
 
 sha512sum --check arch-uefi-cloudimg.qcow2.sha512sum
 ```
@@ -43,7 +43,7 @@ Typically, the VM provisioning process would go something like
 
 In this way, arch-uefi-cloudimg is intentionally a blank canvas.
 
-The slightly opinionated part is perhaps the eschewment of "legacy" technologies and including `zram-generator`. On balance, this seemed reasonable with consensus on the age-old "to swap or not to swap" question appearing to converge towards zram (see [Fedora change](https://fedoraproject.org/wiki/Changes/SwapOnZRAM)), zram being relatively trivial to disable post-provisioning, no upfront partitioning implications, and the assumption modern virtualised workloads would be flash storage backed.
+The slightly opinionated part is perhaps the eschewment of "legacy" technologies and including + enabling `zram-generator`. On balance, this seemed reasonable with consensus on the age-old "to swap or not to swap" question appearing to converge towards zram (see [Fedora change](https://fedoraproject.org/wiki/Changes/SwapOnZRAM)), zram being relatively trivial to disable post-provisioning, no upfront partitioning implications, and the assumption modern virtualised workloads would be flash storage backed.
 
 ## Running
 
@@ -51,19 +51,21 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
 
 <details>
   <summary>Proxmox VE</summary>
-  
+
   Transfer image and `cloud-config.yml` file containing any custom cloud-init vendor/user data to PVE host
-  
+
   ```bash
   pve=user@pve.lan.example.com
-  
+
   scp arch-uefi-cloudimg.qcow2 "${pve}:/var/lib/vz/images/arch-uefi-cloudimg.qcow2"
   scp cloud-config.yml "${pve}:/var/lib/vz/snippets/cloud-config.yml"
   ```
-  
+
   Use PVE host shell to create VM, set cloud-init values, import image, and boot
 
   ```bash
+  storage=local-zfs
+
   vmid=123
   name=example
   ip=10.0.0.123/24
@@ -82,23 +84,23 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
     --ostype l26 \
     --machine q35 \
     --bios ovmf \
-    --efidisk0 local-zfs:0 \
+    --efidisk0 "${storage}:0" \
     --scsihw virtio-scsi-pci \
     --bootdisk scsi0 \
     --boot c \
     --net0 virtio,bridge=vmbr0,tag=3 \
     --vga qxl \
     --agent 1 \
-    --sata0 local-zfs:cloudinit \
+    --sata0 "${storage}:cloudinit" \
     --ipconfig0 "ip=${ip},gw=${gw}" \
     --ciuser "${user}" \
     --sshkeys /tmp/sshkeys \
     --cicustom "vendor=local:snippets/cloud-config.yml"
     #--nameserver and --searchdomain automatically inherit host settings if not specified
-    
-  qm importdisk "${vmid}" /var/lib/vz/images/arch-uefi-cloudimg.qcow2 local-zfs
-  qm set "${vmid}" --scsi0 "local-zfs:vm-${vmid}-disk-1"
-  qm resize "${vmid}" scsi0 10G
+
+  qm disk import "${vmid}" /var/lib/vz/images/arch-uefi-cloudimg.qcow2 "${storage}"
+  qm set "${vmid}" --scsi0 "${storage}:vm-${vmid}-disk-1"
+  qm resize "${vmid}" scsi0 20G
   qm start "${vmid}"
   ```
 
@@ -106,7 +108,7 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
 
 <details>
   <summary>Local QEMU</summary>
-  
+
   Generate cloud-init NoCloud ISO
 
   ```bash
@@ -116,25 +118,27 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
   #cloud-config
   hostname: example
   users:
-  - name: configmgmt
-    passwd: $6$cGjycsOkR1KQFQXW$MyZrZZD8o39wILwMcw8GZOGXt0nII9jHJ4eUcDrCra3gX5zAFYS7j5FoUQ4OT1b4cQlvC06y17daz8C4MWWgh1
-    lock_passwd: false
-    sudo: ALL=(ALL) NOPASSWD:ALL
+    - name: configmgmt
+      passwd: $6$cGjycsOkR1KQFQXW$MyZrZZD8o39wILwMcw8GZOGXt0nII9jHJ4eUcDrCra3gX5zAFYS7j5FoUQ4OT1b4cQlvC06y17daz8C4MWWgh1
+      lock_passwd: false
+      sudo: ALL=(ALL) NOPASSWD:ALL
   EOF
 
   <<comment
-  cat > network-config << EOF
-  # Default QEMU user networking (SLIRP) settings, IP=10.0.2.15/24, DG=10.0.2.2 (host), DNS=10.0.2.3
+  # Default QEMU user networking (SLIRP) guest settings, IP=10.0.2.15/24, GW=10.0.2.2 (host), DNS=10.0.2.3
   # Alternatively, if setting statically through cloud-init, perhaps using a bridged tap interface
+  cat > network-config << EOF
   version: 2
   ethernets:
     enp0s2:
       addresses:
-      - 10.0.0.123/24
+        - 10.0.0.123/24
       gateway4: 10.0.0.1
       nameservers:
-        addresses: [10.0.0.2]
-        search: [lan.example.com]
+        addresses:
+          - 10.0.0.2
+        search:
+          - lan.example.com
   EOF
   comment
 
@@ -142,11 +146,11 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
 
   xorriso -as genisoimage -output cloud-init.iso -volid CIDATA -joliet -rock meta-data user-data vendor-data #network-config
   ```
-  
+
   Run VM
-  
+
   ```bash
-  qemu-img resize arch-uefi-cloudimg.qcow2 10G
+  qemu-img resize arch-uefi-cloudimg.qcow2 20G
   qemu-system-x86_64 \
     -enable-kvm \
     -cpu host \
@@ -174,7 +178,7 @@ In either case
   timezone: US/Eastern
   packages: qemu-guest-agent
   runcmd:
-  - systemctl enable --now qemu-guest-agent
+    - systemctl enable --now qemu-guest-agent
   ```
 
 ## Related Projects
@@ -183,9 +187,9 @@ In either case
 
 The official source of cloud-ready Arch VM images. This was the first thing I turned up in the search for a ready to run Arch cloud image.
 
-Testing, I discovered the images are currently only BIOS (MBR) compatible and wouldn't boot on my chosen VM hardware.
+Testing, I discovered the images were only BIOS (MBR) compatible and wouldn't boot on my chosen VM hardware.
 
-Finding an [open issue](https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/141) about adding hybrid BIOS+UEFI support, I set out to see if this was something I could tackle. Eventually coming to the realisation that, given my requirements, the added complexity to maintain legacy BIOS support and fiddling with GRUB (when simpler UEFI-only boot loader alternatives like systemd-boot exist) etc. wasn't something I wanted to pursue.
+Finding an [issue](https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/141) about adding hybrid BIOS+UEFI support, I set out to see if this was something I could tackle. Eventually coming to the realisation that, given my requirements, the added complexity to maintain legacy BIOS support and fiddling with GRUB (when simpler UEFI-only boot loader alternatives like systemd-boot exist) etc. wasn't something I wanted to pursue.
 
 ### [Arch Installer](https://github.com/archlinux/archinstall)
 
