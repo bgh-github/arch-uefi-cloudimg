@@ -28,7 +28,7 @@ sed --in-place --expression='s/^HOOKS=(base\(.*\))/HOOKS=(base systemd\1)/' /etc
 mkinitcpio -P
 bootctl install
 cat > "/boot/loader/entries/$(grep --perl-regexp --only-matching '^ID=\K.*' /etc/os-release).conf" << EOF
-title $(grep --perl-regexp --only-matching '^PRETTY_NAME=\K.*' /etc/os-release | sed --expression='s/^"//' --expression='s/"$//')
+title $(grep --perl-regexp --only-matching '^PRETTY_NAME=\K.*' /etc/os-release | sed --expression='s/^"\(.*\)"$/\1/')
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
 EOF
