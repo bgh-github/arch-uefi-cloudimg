@@ -20,10 +20,10 @@ jobs:
      - name: Build image
        run: |
          chmod +x ./build-img.sh
-         sudo ./build-img.sh ${{ env.output_path }}
+         sudo ./build-img.sh "${{ env.output_path }}"
      - name: Generate checksum
-       run: cd $(dirname ${{ env.output_path }}); sha512sum "$(basename ${{ env.output_path }}).qcow2" > "$(basename ${{ env.output_path }}).qcow2.sha512sum"
+       run: cd "$(dirname "${{ env.output_path }}")" && sha512sum "$(basename "${{ env.output_path }}").qcow2" > "$(basename "${{ env.output_path }}").qcow2.sha512sum"
      - name: Upload to CDN
        run: |
-         curl --request PUT --url "https://la.storage.bunnycdn.com/bgh-cdn/$(basename ${{ env.output_path }}).qcow2.sha512sum" --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" --header "Content-Type: application/octet-stream" --data-binary "@${output_path}.qcow2.sha512sum"
-         curl --request PUT --url "https://la.storage.bunnycdn.com/bgh-cdn/$(basename ${{ env.output_path }}).qcow2" --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" --header "Content-Type: application/octet-stream" --data-binary "@${output_path}.qcow2"
+         curl --request PUT --url "https://la.storage.bunnycdn.com/bgh-cdn/$(basename "${{ env.output_path }}").qcow2.sha512sum" --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" --header "Content-Type: application/octet-stream" --data-binary "@${output_path}.qcow2.sha512sum"
+         curl --request PUT --url "https://la.storage.bunnycdn.com/bgh-cdn/$(basename "${{ env.output_path }}").qcow2" --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" --header "Content-Type: application/octet-stream" --data-binary "@${output_path}.qcow2"
