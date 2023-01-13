@@ -1,6 +1,6 @@
 #!/bin/bash
 
-output_path=${1}
+output_path="${1}"
 output_dir=$(dirname "${output_path}")
 output_file=$(basename "${output_path}")
 
