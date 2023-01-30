@@ -6,7 +6,7 @@ The runtime target for arch-uefi-cloudimg is "modern" specification [Proxmox VE]
 
 ## Download
 
-**[Image Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2)** (compressed qcow2 format)
+**[Image Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2)** (compressed qcow2 format)  
 **[Checksum Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha512sum)** to verify
 
 ```bash
