@@ -7,15 +7,15 @@ The runtime target for arch-uefi-cloudimg is "modern" specification [Proxmox VE]
 ## Download
 
 **[Image Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2)** (compressed qcow2 format)  
-**[Checksum Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha512sum)** to verify
+**[Checksum Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha384sum)** to verify
 
 ```bash
 cd "${HOME}/Downloads" || exit
 
 curl --remote-name --location https://cdn.bgh.io/arch-uefi-cloudimg.qcow2
-curl --remote-name --location https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha512sum
+curl --remote-name --location https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha384sum
 
-sha512sum --check arch-uefi-cloudimg.qcow2.sha512sum
+sha384sum --check arch-uefi-cloudimg.qcow2.sha384sum
 ```
 
 [![Refresh image](../../actions/workflows/main.yml/badge.svg)](../../actions/workflows/main.yml)
