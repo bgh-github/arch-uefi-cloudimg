@@ -2,7 +2,7 @@ name: Refresh image
 
 on:
   schedule:
-    - cron:  '0 0 * * *'
+    - cron: 0 0 * * *
   workflow_dispatch:
 
 jobs:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: archlinux:latest
-      options: '--privileged --volume=/dev:/dev'
+      options: "--privileged --volume=/dev:/dev"
     env:
       output_path: /tmp/arch-uefi-cloudimg
     steps:
