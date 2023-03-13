@@ -27,8 +27,8 @@ jobs:
             gptfdisk dosfstools arch-install-scripts qemu-img
       - name: Build image
         run: |
-          chmod +x "{build_script_path}"
-          sudo "{build_script_path}" "${{ env.output_path }}"
+          chmod +x "${{ env build_script_path }}"
+          sudo "${{ env.build_script_path }}" "${{ env.output_path }}"
       - name: Generate checksum
         run: |
           cd "$(dirname "${{ env.output_path }}")" \
@@ -38,13 +38,13 @@ jobs:
         run: |
           curl \
             --request PUT \
-            --url "${storage_api_url}/$(basename "${{ env.output_path }}").qcow2.sha384sum" \
+            --url "${{ env. storage_api_url }}/$(basename "${{ env.output_path }}").qcow2.sha384sum" \
             --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
             --header "Content-Type: application/octet-stream" \
-            --data-binary "@${output_path}.qcow2.sha384sum"
+            --data-binary "@${{ env.output_path }}.qcow2.sha384sum"
           curl \
             --request PUT \
-            --url "${storage_api_url}/$(basename "${{ env.output_path }}").qcow2" \
+            --url "${{ env.storage_api_url }}/$(basename "${{ env.output_path }}").qcow2" \
             --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
             --header "Content-Type: application/octet-stream" \
-            --data-binary "@${output_path}.qcow2"
+            --data-binary "@${{ env.output_path }}.qcow2"
