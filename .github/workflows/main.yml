@@ -27,7 +27,7 @@ jobs:
             gptfdisk dosfstools arch-install-scripts qemu-img
       - name: Build image
         run: |
-          chmod +x "${{ env build_script_path }}"
+          chmod +x "${{ env.build_script_path }}"
           sudo "${{ env.build_script_path }}" "${{ env.output_path }}"
       - name: Generate checksum
         run: |
