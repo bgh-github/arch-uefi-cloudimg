@@ -12,8 +12,8 @@ The runtime target for arch-uefi-cloudimg is "modern" specification [Proxmox VE]
 ```bash
 cd "${HOME}/Downloads" || exit
 
-curl --remote-name --location https://cdn.bgh.io/arch-uefi-cloudimg.qcow2
-curl --remote-name --location https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha384sum
+curl --remote-name https://cdn.bgh.io/arch-uefi-cloudimg.qcow2
+curl --remote-name https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha384sum
 
 sha384sum --check arch-uefi-cloudimg.qcow2.sha384sum
 ```
