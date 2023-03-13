@@ -12,18 +12,39 @@ jobs:
       image: archlinux:base-devel
       options: "--privileged --volume=/dev:/dev"
     env:
+      build_script_path: ./build-img.sh
       output_path: /tmp/arch-uefi-cloudimg
+      storage_api_url : https://la.storage.bunnycdn.com/bgh-cdn
     steps:
       - uses: actions/checkout@v3
       - name: Install build packages
-        run: pacman --sync --sysupgrade --refresh --noconfirm gptfdisk dosfstools arch-install-scripts qemu-img
+        run: |
+          pacman \
+            --sync \
+            --sysupgrade \
+            --refresh \
+            --noconfirm \
+            gptfdisk dosfstools arch-install-scripts qemu-img
       - name: Build image
         run: |
-          chmod +x ./build-img.sh
-          sudo ./build-img.sh "${{ env.output_path }}"
+          chmod +x "{build_script_path}"
+          sudo "{build_script_path}" "${{ env.output_path }}"
       - name: Generate checksum
-        run: cd "$(dirname "${{ env.output_path }}")" && sha384sum "$(basename "${{ env.output_path }}").qcow2" > "$(basename "${{ env.output_path }}").qcow2.sha384sum"
+        run: |
+          cd "$(dirname "${{ env.output_path }}")" \
+            && sha384sum "$(basename "${{ env.output_path }}").qcow2" \
+            > "$(basename "${{ env.output_path }}").qcow2.sha384sum"
       - name: Upload to CDN
         run: |
-          curl --request PUT --url "https://la.storage.bunnycdn.com/bgh-cdn/$(basename "${{ env.output_path }}").qcow2.sha384sum" --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" --header "Content-Type: application/octet-stream" --data-binary "@${output_path}.qcow2.sha384sum"
-          curl --request PUT --url "https://la.storage.bunnycdn.com/bgh-cdn/$(basename "${{ env.output_path }}").qcow2" --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" --header "Content-Type: application/octet-stream" --data-binary "@${output_path}.qcow2"
+          curl \
+            --request PUT \
+            --url "${storage_api_url}/$(basename "${{ env.output_path }}").qcow2.sha384sum" \
+            --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
+            --header "Content-Type: application/octet-stream" \
+            --data-binary "@${output_path}.qcow2.sha384sum"
+          curl \
+            --request PUT \
+            --url "${storage_api_url}/$(basename "${{ env.output_path }}").qcow2" \
+            --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
+            --header "Content-Type: application/octet-stream" \
+            --data-binary "@${output_path}.qcow2"
