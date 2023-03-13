@@ -9,14 +9,14 @@ jobs:
   arch-uefi-cloudimg:
     runs-on: ubuntu-latest
     container:
-      image: archlinux:latest
+      image: archlinux:base-devel
       options: "--privileged --volume=/dev:/dev"
     env:
       output_path: /tmp/arch-uefi-cloudimg
     steps:
       - uses: actions/checkout@v3
       - name: Install build packages
-        run: pacman --sync --sysupgrade --refresh --noconfirm gptfdisk base-devel dosfstools arch-install-scripts qemu-img
+        run: pacman --sync --sysupgrade --refresh --noconfirm gptfdisk dosfstools arch-install-scripts qemu-img
       - name: Build image
         run: |
           chmod +x ./build-img.sh
