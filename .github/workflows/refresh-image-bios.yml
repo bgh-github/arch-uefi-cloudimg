@@ -1,0 +1,50 @@
+name: Refresh image - BIOS
+
+on:
+  schedule:
+    - cron: 0 0 * * *
+  workflow_dispatch:
+
+jobs:
+  arch-uefi-cloudimg:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+      options: "--privileged --volume=/dev:/dev"
+    env:
+      build_script_path: ./build-img-bios.sh
+      output_path: /tmp/arch-uefi-cloudimg-bios
+      storage_api_url : https://la.storage.bunnycdn.com/bgh-cdn
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install build packages
+        run: |
+          pacman \
+            --sync \
+            --sysupgrade \
+            --refresh \
+            --noconfirm \
+            gptfdisk dosfstools arch-install-scripts qemu-img
+      - name: Build image
+        run: |
+          chmod +x "${{ env.build_script_path }}"
+          sudo "${{ env.build_script_path }}" "${{ env.output_path }}"
+      - name: Generate checksum
+        run: |
+          cd "$(dirname "${{ env.output_path }}")" \
+            && sha384sum "$(basename "${{ env.output_path }}")" \
+            > "$(basename "${{ env.output_path }}").sha384sum"
+      - name: Upload to CDN
+        run: |
+          curl \
+            --request PUT \
+            --url "${{ env. storage_api_url }}/$(basename "${{ env.output_path }}").sha384sum" \
+            --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
+            --header "Content-Type: application/octet-stream" \
+            --data-binary "@${{ env.output_path }}.sha384sum"
+          curl \
+            --request PUT \
+            --url "${{ env. storage_api_url }}/$(basename "${{ env.output_path }}")" \
+            --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
+            --header "Content-Type: application/octet-stream" \
+            --upload-file "${{ env.output_path }}"
