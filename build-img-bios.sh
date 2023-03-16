@@ -26,7 +26,7 @@ grub-install --target=i386-pc "${loop_dev}"
 grub-mkconfig --output=/boot/grub/grub.cfg
 sed --in-place --expression='s/.*/uninitialized/' /etc/machine-id
 echo "BUILD_ID=${output_file}-$(date --utc --iso-8601=minutes)" >> /etc/os-release
-sed --expression='s/if not check_route(url):/#if not check_route(url):/' --expression='/if not check_route(url):/{n;s/continue/#continue/g}' /usr/lib/python3.10/site-packages/cloudinit/sources/helpers/vultr.py
+sed --in-place --expression='s/if not check_route(url):/#if not check_route(url):/' --expression='/if not check_route(url):/{n;s/continue/#continue/g}' /usr/lib/python3.10/site-packages/cloudinit/sources/helpers/vultr.py
 EOM
 
 sudo umount "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount"
