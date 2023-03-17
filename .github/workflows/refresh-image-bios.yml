@@ -13,7 +13,7 @@ jobs:
       options: "--privileged --volume=/dev:/dev"
     env:
       build_script_path: ./build-img-bios.sh
-      output_path: /tmp/arch-uefi-cloudimg-bios
+      output_path: /tmp/arch-uefi-cloudimg-bios.raw
       storage_api_url : https://la.storage.bunnycdn.com/bgh-cdn
     steps:
       - uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
             --sysupgrade \
             --refresh \
             --noconfirm \
-            gptfdisk dosfstools arch-install-scripts qemu-img
+            gptfdisk arch-install-scripts
       - name: Build image
         run: |
           chmod +x "${{ env.build_script_path }}"
