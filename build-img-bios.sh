@@ -5,7 +5,7 @@ output_dir=$(dirname "${output_path}")
 output_file=$(basename "${output_path}")
 
 truncate --size=2G "${output_path}"
-sgdisk --clear --new 0:0:+1M --typecode=0:ef02 --new 0:0:0 --typecode=0:8304 "${output_path}"
+sgdisk --align-end --clear --new 0:0:+1M --typecode=0:ef02 --new 0:0:0 --typecode=0:8304 "${output_path}"
 
 loop_dev=/dev/loop123
 sudo losetup --partscan "${loop_dev}" "${output_path}"
