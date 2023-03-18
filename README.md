@@ -189,7 +189,7 @@ The official source of cloud-ready Arch VM images. This was the first thing I tu
 
 Testing, I discovered the images were only BIOS (MBR) compatible and wouldn't boot on my chosen VM hardware.
 
-Finding an [issue](https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/141) about adding hybrid BIOS+UEFI support, I set out to see if this was something I could tackle. Eventually coming to the realisation that, given my requirements, the added complexity to maintain legacy BIOS support and fiddling with GRUB (when simpler UEFI-only boot loader alternatives like systemd-boot exist) etc. wasn't something I wanted to pursue.
+Finding an [issue](https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/141) about adding hybrid BIOS+UEFI support, I set out to see if this was something I could tackle. Eventually coming to the realisation that, given my requirements, the added complexity to maintain legacy BIOS support and fiddling with hybrid GRUB configuration (when simpler UEFI-only boot loader alternatives like systemd-boot exist) etc. wasn't something I wanted to pursue.
 
 ### [Arch Installer](https://github.com/archlinux/archinstall)
 
@@ -204,3 +204,20 @@ A utility under the systemd project banner used to create custom operating syste
 I stumbled upon this very late just prior to wrapping up work on arch-uefi-cloudimg. The tool appears to provide a high degree of flexibility if the goal is to build images for several OS flavours. Another plus it being built with an eye towards systemd-nspawn containers and secure boot. It also appears to share a similar ["legacy-free"](https://0pointer.net/blog/mkosi-a-tool-for-generating-os-images.html) philosophy to arch-uefi-cloudimg.
 
 While yet to properly explore mkosi, I'd like to think arch-uefi-cloudimg still has its place in striking a balance between aligning to the official ArchWiki [Installation guide](https://wiki.archlinux.org/title/installation_guide) and doing what's necessary to automate modern cloud-ready Arch Linux VM image creation.
+
+## BIOS
+
+The unfortunate reality is most cloud/VPS providers still only support legacy BIOS boot.
+
+For these situations, the rather paradoxically named arch-uefi-cloudimg-bios build is available. This variant includes a minimal set of changes to partitioning etc. and uses GRUB as the boot loader.
+
+```bash
+cd "${HOME}/Downloads" || exit
+
+curl --remote-name https://cdn.bgh.io/arch-uefi-cloudimg-bios.raw
+curl --remote-name https://cdn.bgh.io/arch-uefi-cloudimg-bios.raw.sha384sum
+
+sha384sum --check arch-uefi-cloudimg-bios.raw.sha384sum
+```
+
+[![Refresh image - BIOS](../../actions/workflows/refresh-image-bios.yml/badge.svg)](../../actions/workflows/refresh-image-bios.yml)
