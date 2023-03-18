@@ -187,7 +187,7 @@ In either case
 
 The official source of cloud-ready Arch VM images. This was the first thing I turned up in the search for a ready to run Arch cloud image.
 
-Testing, I discovered the images were only BIOS (MBR) compatible and wouldn't boot on my chosen VM hardware.
+Testing, I discovered the images were only BIOS compatible and wouldn't boot on my chosen VM hardware.
 
 Finding an [issue](https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/141) about adding hybrid BIOS+UEFI support, I set out to see if this was something I could tackle. Eventually coming to the realisation that, given my requirements, the added complexity to maintain legacy BIOS support and fiddling with hybrid GRUB configuration (when simpler UEFI-only boot loader alternatives like systemd-boot exist) etc. wasn't something I wanted to pursue.
 
