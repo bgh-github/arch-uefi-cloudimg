@@ -28,13 +28,13 @@ The above GitHub Actions workflow automatically refreshes the image around midni
 
 It should also be possible to generate the image locally by executing `./build-img.sh <output_path>` on an Arch-based machine. For example, `./build-img.sh /tmp/arch-uefi-cloudimg`.
 
-The machine running the build must have internet connectivity and the following packages installed at a minimum - `gptfdisk`, `base-devel`/`sudo`, `dosfstools`, `arch-install-scripts`, `qemu-img`.
+The machine running the build must have internet connectivity and the following packages installed at a minimum - `gptfdisk`, `sudo`/`base-devel`, `dosfstools`, `arch-install-scripts`, `qemu-img`.
 
 ## What's Included
 
 In short, not much. And that's kind of the idea.
 
-In the Arch [spirit](https://wiki.archlinux.org/title/Arch_Linux#Principles) of simplicity and minimalism, the only packages included out of the box with arch-uefi-cloudimg are `base`, `linux`, `zram-generator`, `openssh`, `cloud-init`, and `cloud-guest-utils`. The main reason arch-uefi-cloudimg exists is to solve a bootstrapping problem. Its job is really to do just enough to facilitate VM boot and early initialisation, at which point a full configuration management solution would take over.
+In the Arch [spirit](https://wiki.archlinux.org/title/Arch_Linux#Principles) of simplicity and minimalism, the only packages installed out of the box with arch-uefi-cloudimg are `base`, `linux`, `zram-generator`, `openssh`, `cloud-init`, and `cloud-guest-utils` (and their dependencies). The main reason arch-uefi-cloudimg exists is to solve a bootstrapping problem. Its job is really to do just enough to facilitate VM boot and early initialisation, at which point a full configuration management solution would take over.
 
 Typically, the VM provisioning process would go something like
 
@@ -178,6 +178,7 @@ In either case
   timezone: US/Eastern
   packages: qemu-guest-agent
   runcmd:
+    - pacman-key --init
     - systemctl enable --now qemu-guest-agent
   ```
 
@@ -207,7 +208,7 @@ While yet to properly explore mkosi, I'd like to think arch-uefi-cloudimg still 
 
 ## BIOS
 
-The unfortunate reality is most cloud/VPS providers still only support legacy BIOS boot.
+The unfortunate reality is many cloud/VPS providers still only support legacy BIOS boot.
 
 For these situations, the rather paradoxically named arch-uefi-cloudimg-bios build is available. This variant includes a minimal set of changes to partitioning etc. and uses GRUB as the boot loader.
 
