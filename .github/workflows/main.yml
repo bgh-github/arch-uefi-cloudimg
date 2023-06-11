@@ -9,8 +9,8 @@ jobs:
   arch-uefi-cloudimg:
     runs-on: ubuntu-latest
     container:
-      image: archlinux:base-devel
-      options: "--privileged --volume=/dev:/dev"
+      image: archlinux:latest
+      options: '--privileged --volume=/dev:/dev'
     env:
       build_script_path: ./build-img.sh
       output_path: /tmp/arch-uefi-cloudimg
@@ -24,15 +24,15 @@ jobs:
             --sysupgrade \
             --refresh \
             --noconfirm \
-            gptfdisk dosfstools arch-install-scripts qemu-img
+            gptfdisk sudo dosfstools arch-install-scripts qemu-img
       - name: Build image
         run: |
           chmod +x "${{ env.build_script_path }}"
           sudo "${{ env.build_script_path }}" "${{ env.output_path }}"
       - name: Generate checksum
         run: |
-          cd "$(dirname "${{ env.output_path }}")" \
-            && sha384sum "$(basename "${{ env.output_path }}").qcow2" \
+          cd "$(dirname "${{ env.output_path }}")" &&
+            sha384sum "$(basename "${{ env.output_path }}").qcow2" \
             > "$(basename "${{ env.output_path }}").qcow2.sha384sum"
       - name: Upload to CDN
         run: |
@@ -40,11 +40,11 @@ jobs:
             --request PUT \
             --url "${{ env. storage_api_url }}/$(basename "${{ env.output_path }}").qcow2.sha384sum" \
             --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
-            --header "Content-Type: application/octet-stream" \
+            --header 'Content-Type: application/octet-stream' \
             --data-binary "@${{ env.output_path }}.qcow2.sha384sum"
           curl \
             --request PUT \
             --url "${{ env.storage_api_url }}/$(basename "${{ env.output_path }}").qcow2" \
             --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
-            --header "Content-Type: application/octet-stream" \
+            --header 'Content-Type: application/octet-stream' \
             --data-binary "@${{ env.output_path }}.qcow2"
