@@ -22,12 +22,12 @@ sudo arch-chroot "${output_dir}/mount/img" /bin/bash << EOM
 echo '[zram0]' > /etc/systemd/zram-generator.conf
 ln --symbolic --force /usr/share/zoneinfo/UTC /etc/localtime
 systemctl enable systemd-networkd.service systemd-resolved.service cloud-init.service cloud-final.service
-sed --in-place --expression='s|\(^\MODULES=(\)\(.*\))|\1\2 virtio-pci virtio-scsi)|' --expression='s|(\s|(|' /etc/mkinitcpio.conf
+sed --in-place --expression='s|\(^\MODULES=(\)\(.*\))$|\1\2 virtio-pci virtio-scsi)|' --expression='s|(\s|(|' /etc/mkinitcpio.conf
 sed --in-place --expression='s|\(^HOOKS=(base\)|\1 systemd|' /etc/mkinitcpio.conf
 mkinitcpio --allpresets
 bootctl install
 cat > "/boot/loader/entries/$(grep --perl-regexp --only-matching '^ID=\K.*' /etc/os-release).conf" << EOF
-title $(grep --perl-regexp --only-matching '^PRETTY_NAME="\K[^"]*' /etc/os-release)
+title $(grep '^PRETTY_NAME=' /etc/os-release | sed --expression='s|^PRETTY_NAME="\(.*\)"$|\1|')
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
 EOF
