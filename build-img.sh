@@ -16,7 +16,7 @@ sudo partprobe "${loop_dev}"
 sudo mount --mkdir "${loop_dev}p1" "${output_dir}/mount/boot"
 sudo mount --mkdir "${loop_dev}p2" "${output_dir}/mount/img"
 sudo mount --mkdir --bind "${output_dir}/mount/boot" "${output_dir}/mount/img/boot"
-sudo pacstrap "${output_dir}/mount/img" base linux zram-generator openssh cloud-init cloud-guest-utils
+sudo pacstrap "${output_dir}/mount/img" base linux zram-generator openssh cloud-init cloud-guest-utils gptfdisk
 
 sudo arch-chroot "${output_dir}/mount/img" /bin/bash << EOM
 echo '[zram0]' > /etc/systemd/zram-generator.conf

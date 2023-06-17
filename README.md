@@ -34,7 +34,7 @@ The machine running the build must have internet connectivity and the following 
 
 In short, not much. And that's kind of the idea.
 
-In the Arch [spirit](https://wiki.archlinux.org/title/Arch_Linux#Principles) of simplicity and minimalism, the only packages installed out of the box with arch-uefi-cloudimg are `base`, `linux`, `zram-generator`, `openssh`, `cloud-init`, and `cloud-guest-utils` (and their dependencies). The main reason arch-uefi-cloudimg exists is to solve a bootstrapping problem. Its job is really to do just enough to facilitate VM boot and early initialisation, at which point a full configuration management solution would take over.
+In the Arch [spirit](https://wiki.archlinux.org/title/Arch_Linux#Principles) of simplicity and minimalism, the only packages installed out of the box with arch-uefi-cloudimg are `base`, `linux`, `zram-generator`, `openssh`, `cloud-init`, `cloud-guest-utils`, and `gptfdisk` (and their dependencies). The main reason arch-uefi-cloudimg exists is to solve a bootstrapping problem. Its job is really to do just enough to facilitate VM boot and early initialisation, at which point a full configuration management solution would take over.
 
 Typically, the VM provisioning process would go something like
 
