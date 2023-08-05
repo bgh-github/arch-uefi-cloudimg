@@ -26,7 +26,7 @@ jobs:
             --noconfirm \
             gptfdisk sudo dosfstools arch-install-scripts qemu-img
       - name: Restore default (non-container-specific) pacman.conf
-        run: curl --url https://gitlab.archlinux.org/archlinux/packaging/packages/pacman/-/raw/main/pacman.conf /etc/pacman.conf
+        run: curl --url https://gitlab.archlinux.org/archlinux/packaging/packages/pacman/-/raw/main/pacman.conf > /etc/pacman.conf
       - name: Build image
         run: |
           chmod +x "${{ env.build_script_path }}"
