@@ -10,12 +10,13 @@ The runtime target for arch-uefi-cloudimg is "modern" specification [Proxmox VE]
 **[Checksum Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha384sum)** to verify
 
 ```bash
+img_name=arch-uefi-cloudimg
+
 cd "${HOME}/Downloads" || exit
+curl --remote-name "https://cdn.bgh.io/${img_name}.qcow2"
+curl --remote-name "https://cdn.bgh.io/${img_name}.qcow2.sha384sum"
 
-curl --remote-name https://cdn.bgh.io/arch-uefi-cloudimg.qcow2
-curl --remote-name https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha384sum
-
-sha384sum --check arch-uefi-cloudimg.qcow2.sha384sum
+sha384sum --check "${img_name}.qcow2.sha384sum"
 ```
 
 [![Refresh image](../../actions/workflows/main.yml/badge.svg)](../../actions/workflows/main.yml)
@@ -119,7 +120,7 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
   hostname: example
   users:
     - name: configmgmt
-      passwd: $6$cGjycsOkR1KQFQXW$MyZrZZD8o39wILwMcw8GZOGXt0nII9jHJ4eUcDrCra3gX5zAFYS7j5FoUQ4OT1b4cQlvC06y17daz8C4MWWgh1
+      passwd: $6$cGjycsOkR1KQFQXW$MyZrZZD8o39wILwMcw8GZOGXt0nII9jHJ4eUcDrCra3gX5zAFYS7j5FoUQ4OT1b4cQlvC06y17daz8C4MWWgh1 # example
       lock_passwd: false
       sudo: ALL=(ALL) NOPASSWD:ALL
   EOF
