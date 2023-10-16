@@ -16,7 +16,7 @@ jobs:
       output_path: /tmp/arch-uefi-cloudimg
       storage_api_url : https://la.storage.bunnycdn.com/bgh-cdn
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install build packages
         run: |
           pacman \
