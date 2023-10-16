@@ -87,6 +87,7 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
     --bios ovmf \
     --efidisk0 "${storage}:0" \
     --scsihw virtio-scsi-pci \
+    --scsi0 "${storage}:0,import-from=/var/lib/vz/images/arch-uefi-cloudimg.qcow2" \
     --bootdisk scsi0 \
     --boot c \
     --net0 virtio,bridge=vmbr0,tag=3 \
@@ -99,8 +100,6 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
     --cicustom "vendor=local:snippets/cloud-config.yml"
     #--nameserver and --searchdomain automatically inherit host settings if not specified
 
-  qm disk import "${vmid}" /var/lib/vz/images/arch-uefi-cloudimg.qcow2 "${storage}"
-  qm set "${vmid}" --scsi0 "${storage}:vm-${vmid}-disk-1"
   qm resize "${vmid}" scsi0 20G
   qm start "${vmid}"
   ```
