@@ -23,7 +23,8 @@ sha384sum --check "${img_name}.qcow2.sha384sum"
 
 The above GitHub Actions workflow automatically refreshes the image around midnight UTC+0 each day. Downloads will remain openly available so long as CDN bandwidth costs don't get out of hand.
 
-> :warning: It mostly goes without saying, but a quick disclaimer: files are provided as-is for non-mission-critical use. They should not be relied upon, and at times may be broken
+> [!WARNING]
+> It mostly goes without saying, but a quick disclaimer: files are provided as-is for non-mission-critical use. They should not be relied upon, and at times may be broken
 
 ## Local Build
 
