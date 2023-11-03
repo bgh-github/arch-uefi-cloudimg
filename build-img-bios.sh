@@ -15,18 +15,16 @@ sudo partprobe "${loop_dev}"
 sudo mount --mkdir "${loop_dev}p2" "${output_dir}/mount/img"
 sudo pacstrap "${output_dir}/mount/img" base linux zram-generator openssh cloud-init cloud-guest-utils grub
 
-sudo arch-chroot "${output_dir}/mount/img" /bin/bash << EOM
-echo "[zram0]" > /etc/systemd/zram-generator.conf
+sudo arch-chroot "${output_dir}/mount/img" /bin/bash << EOF
+echo '[zram0]' > /etc/systemd/zram-generator.conf
 ln --symbolic --force /usr/share/zoneinfo/UTC /etc/localtime
 systemctl enable systemd-networkd.service systemd-resolved.service cloud-init.service cloud-final.service
-sed --in-place --expression='s/^MODULES=(\(.*\))/MODULES=(\1 virtio-pci virtio-scsi)/' --expression='s/(\s/(/' /etc/mkinitcpio.conf
-sed --in-place --expression='s/^HOOKS=(base\(.*\))/HOOKS=(base systemd\1)/' /etc/mkinitcpio.conf
+sed --in-place --expression='s|\(^\MODULES=(\)\(.*\))$|\1\2 virtio-pci virtio-scsi)|' --expression='s|(\s|(|' --expression='s|\(^HOOKS=(base\)|\1 systemd|' /etc/mkinitcpio.conf
 mkinitcpio --allpresets
 grub-install --target=i386-pc "${loop_dev}"
 grub-mkconfig --output=/boot/grub/grub.cfg
-sed --in-place --expression='s/.*/uninitialized/' /etc/machine-id
+sed --in-place --expression='s|.*|uninitialized|' /etc/machine-id
 echo "BUILD_ID=${output_file}-$(date --utc --iso-8601=minutes)" >> /etc/os-release
-sed --in-place --expression='s/if not check_route(url):/#if not check_route(url):/' --expression='/if not check_route(url):/{n;s/continue/#continue/g}' /usr/lib/python3.11/site-packages/cloudinit/sources/helpers/vultr.py
-EOM
+EOF
 
 sudo umount "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount"
