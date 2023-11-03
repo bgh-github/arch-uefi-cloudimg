@@ -10,13 +10,13 @@ The runtime target for arch-uefi-cloudimg is "modern" specification [Proxmox VE]
 **[Checksum Download](https://cdn.bgh.io/arch-uefi-cloudimg.qcow2.sha384sum)** to verify
 
 ```bash
-img_name=arch-uefi-cloudimg
+img_file=arch-uefi-cloudimg.qcow2
 
 cd "${HOME}/Downloads" || exit
-curl --remote-name "https://cdn.bgh.io/${img_name}.qcow2"
-curl --remote-name "https://cdn.bgh.io/${img_name}.qcow2.sha384sum"
+curl --remote-name "https://cdn.bgh.io/${img_file}"
+curl --remote-name "https://cdn.bgh.io/${img_file}.sha384sum"
 
-sha384sum --check "${img_name}.qcow2.sha384sum"
+sha384sum --check "${img_file}.sha384sum"
 ```
 
 [![Refresh image](../../actions/workflows/main.yml/badge.svg)](../../actions/workflows/main.yml)
@@ -214,12 +214,14 @@ The unfortunate reality is many cloud/VPS providers still only support legacy BI
 For these situations, the rather paradoxically named arch-uefi-cloudimg-bios build is available. This variant includes a minimal set of changes to partitioning etc. and uses GRUB as the boot loader.
 
 ```bash
+img_file=arch-uefi-cloudimg-bios.raw
+# img_file=arch-uefi-cloudimg-bios.raw.gz
+
 cd "${HOME}/Downloads" || exit
+curl --remote-name "https://cdn.bgh.io/${img_file}"
+curl --remote-name "https://cdn.bgh.io/${img_file}.sha384sum"
 
-curl --remote-name https://cdn.bgh.io/arch-uefi-cloudimg-bios.raw
-curl --remote-name https://cdn.bgh.io/arch-uefi-cloudimg-bios.raw.sha384sum
-
-sha384sum --check arch-uefi-cloudimg-bios.raw.sha384sum
+sha384sum --check "${img_file}.sha384sum"
 ```
 
 [![Refresh image - BIOS](../../actions/workflows/refresh-image-bios.yml/badge.svg)](../../actions/workflows/refresh-image-bios.yml)
