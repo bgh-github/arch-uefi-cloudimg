@@ -31,22 +31,30 @@ jobs:
         run: |
           chmod +x "${{ env.build_script_path }}"
           sudo "${{ env.build_script_path }}" "${{ env.output_path }}"
-      - name: Generate checksum
+      - name: Create a gzip copy
         run: |
-          cd "$(dirname "${{ env.output_path }}")" &&
-            sha384sum "$(basename "${{ env.output_path }}")" \
-            > "$(basename "${{ env.output_path }}").sha384sum"
+          gzip --keep "${{ env.output_path }}"
+          echo "image_paths=${{ env.output_path }} ${{ env.output_path }}.gz" >> $GITHUB_ENV
+      - name: Generate checksums
+        run: |
+          for image_path in ${image_paths}; do
+            cd "$(dirname "${image_path}")"
+            sha384sum "$(basename "${image_path}")" \
+              > "$(basename "${image_path}").sha384sum"
+          done
       - name: Upload to CDN
         run: |
-          curl \
-            --request PUT \
-            --url "${{ env. storage_api_url }}/$(basename "${{ env.output_path }}").sha384sum" \
-            --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
-            --header 'Content-Type: application/octet-stream' \
-            --data-binary "@${{ env.output_path }}.sha384sum"
-          curl \
-            --request PUT \
-            --url "${{ env. storage_api_url }}/$(basename "${{ env.output_path }}")" \
-            --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
-            --header 'Content-Type: application/octet-stream' \
-            --upload-file "${{ env.output_path }}"
+          for image_path in ${image_paths}; do
+            curl \
+              --request PUT \
+              --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
+              --header 'Content-Type: application/octet-stream' \
+              --data-binary "@${image_path}.sha384sum" \
+              --url "${{ env. storage_api_url }}/$(basename "${image_path}").sha384sum"
+            curl \
+              --request PUT \
+              --header "AccessKey: ${{ secrets.BUNNY_ACCESSKEY }}" \
+              --header 'Content-Type: application/octet-stream' \
+              --upload-file "${image_path}" \
+              --url "${{ env. storage_api_url }}/$(basename "${image_path}")"
+          done
