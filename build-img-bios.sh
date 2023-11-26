@@ -19,7 +19,7 @@ sudo arch-chroot "${output_dir}/mount/img" /bin/bash << EOF
 echo '[zram0]' > /etc/systemd/zram-generator.conf
 ln --symbolic --force /usr/share/zoneinfo/UTC /etc/localtime
 systemctl enable systemd-networkd.service systemd-resolved.service cloud-init.service cloud-final.service
-sed --in-place --expression='s|\(^\MODULES=(\)\(.*\))$|\1\2 virtio-pci virtio-scsi)|' --expression='s|(\s|(|' --expression='s|\(^HOOKS=(base\)|\1 systemd|' /etc/mkinitcpio.conf
+sed --in-place --expression='s|\(^\MODULES=(\)\(.*\))$|\1\2 virtio_pci sr_mod)|' --expression='s|(\s|(|' --expression='s|\(^HOOKS=(base\)|\1 systemd|' /etc/mkinitcpio.conf
 mkinitcpio --allpresets
 grub-install --target=i386-pc "${loop_dev}"
 grub-mkconfig --output=/boot/grub/grub.cfg
