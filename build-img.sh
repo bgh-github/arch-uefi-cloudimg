@@ -23,7 +23,7 @@ sudo pacstrap "${output_dir}/mount/img" linux zram-generator openssh cloud-init 
 sudo arch-chroot "${output_dir}/mount/img" /bin/bash << EOF
 rm /boot/initramfs-linux*.img
 echo '[zram0]' > /etc/systemd/zram-generator.conf
-ln --symbolic --force /usr/share/zoneinfo/UTC /etc/localtime
+systemd-firstboot --timezone=UTC
 systemctl enable systemd-networkd.service systemd-resolved.service cloud-init.service cloud-final.service
 sed --in-place --expression='s|\(^\MODULES=(\)\(.*\))$|\1\2 virtio_pci sr_mod)|' --expression='s|(\s|(|' --expression='s|\(^HOOKS=(base\)|\1 systemd|' /etc/mkinitcpio.conf
 sed --in-place --expression='s|\(default_image=\)|#\1|' --expression='s|#\(default_uki=\)|\1|' --expression='s|#\(default_options=\)"\(.*\)"|\1"\2 --no-cmdline"|' --expression='s|\(fallback_image=\)|#\1|' --expression='s|#\(fallback_uki=\)|\1|' --expression='s|\(fallback_options=\)"\(.*\)"|\1"\2 --no-cmdline"|' /etc/mkinitcpio.d/linux.preset
