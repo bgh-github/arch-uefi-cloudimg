@@ -2,7 +2,7 @@
 
 A (unofficial) minimal, [cloud-init](https://cloudinit.readthedocs.io) enabled [Arch Linux](https://archlinux.org) virtual machine image build for UEFI booting on latest generation VM hardware.
 
-The runtime target for arch-uefi-cloudimg is "modern" specification [Proxmox VE](https://www.proxmox.com/proxmox-ve) (or more generally [QEMU](https://www.qemu.org)/KVM) VM hardware. Specifically, QEMU VMs configured with UEFI (OVMF) boot, Q35 chipset, paravirtualised VirtIO storage and network etc.
+The image targets "modern" specification [Proxmox VE](https://www.proxmox.com/proxmox-ve) (or more generally [QEMU](https://www.qemu.org)/KVM) VM hardware. That is, QEMU VMs configured with UEFI (OVMF) boot, Q35 chipset, paravirtualised VirtIO storage and network etc.
 
 ## Download
 
