@@ -11,6 +11,7 @@ The image targets "modern" specification [Proxmox VE](https://www.proxmox.com/pr
 
 ```bash
 img_file=arch-uefi-cloudimg.qcow2
+# img_file=arch-uefi-cloudimg.raw
 
 cd "${HOME}/Downloads" || exit
 curl --remote-name "https://cdn.bgh.io/${img_file}"
