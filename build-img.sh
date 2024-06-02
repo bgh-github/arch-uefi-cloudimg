@@ -18,7 +18,7 @@ sudo mount --mkdir "${loop_dev}p2" "${output_dir}/mount/img"
 sudo pacstrap "${output_dir}/mount/img" base
 sudo arch-chroot "${output_dir}/mount/img" mkdir /efi
 sudo mount --bind "${output_dir}/mount/efi" "${output_dir}/mount/img/efi"
-sudo pacstrap "${output_dir}/mount/img" linux zram-generator openssh cloud-init cloud-guest-utils gptfdisk
+sudo pacstrap "${output_dir}/mount/img" linux systemd-ukify zram-generator openssh cloud-init cloud-guest-utils gptfdisk
 
 sudo arch-chroot "${output_dir}/mount/img" /bin/bash << EOF
 rm /boot/initramfs-linux*.img
