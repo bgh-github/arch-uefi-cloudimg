@@ -5,7 +5,7 @@ output_dir=$(dirname "${output_path}")
 output_file=$(basename "${output_path}")
 
 truncate --size=2G "${output_path}"
-echo -e 'label: gpt\n size=300MiB, type=uefi\n type=4f68bce3-e8cd-4db1-96e7-fbcaf984b709' | sfdisk "${output_path}"
+echo -e 'label: gpt\n size=300MiB, type=uefi\n type=4f68bce3-e8cd-4db1-96e7-fbcaf984b709, attrs=59' | sfdisk "${output_path}"
 
 loop_dev=/dev/loop123
 sudo losetup --partscan "${loop_dev}" "${output_path}"
@@ -18,11 +18,12 @@ sudo mount --mkdir "${loop_dev}p2" "${output_dir}/mount/img"
 sudo pacstrap "${output_dir}/mount/img" base
 sudo arch-chroot "${output_dir}/mount/img" mkdir /efi
 sudo mount --bind "${output_dir}/mount/efi" "${output_dir}/mount/img/efi"
-sudo pacstrap "${output_dir}/mount/img" linux systemd-ukify zram-generator openssh cloud-init cloud-guest-utils gptfdisk
+sudo pacstrap "${output_dir}/mount/img" linux systemd-ukify zram-generator openssh cloud-init
 
 sudo arch-chroot "${output_dir}/mount/img" /bin/bash << EOF
 rm /boot/initramfs-linux*.img
 echo '[zram0]' > /etc/systemd/zram-generator.conf
+mkdir /etc/repart.d && echo -e '[Partition]\nType=root' > /etc/repart.d/grow-root.conf
 systemd-firstboot --timezone=UTC
 systemctl enable systemd-networkd.service systemd-resolved.service cloud-init.service cloud-final.service
 sed --in-place --expression='s|\(^\MODULES=(\)\(.*\))$|\1\2 virtio_pci sr_mod)|' --expression='s|(\s|(|' --expression='s|\(^HOOKS=(base\)|\1 systemd|' /etc/mkinitcpio.conf
