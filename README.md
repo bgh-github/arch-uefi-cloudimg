@@ -31,7 +31,7 @@ The above GitHub Actions workflow automatically refreshes the image around midni
 
 It should also be possible to generate the image locally by executing `./build-img.sh <output_path>` on an Arch-based machine. For example, `./build-img.sh /tmp/arch-uefi-cloudimg`.
 
-The machine running the build must have internet connectivity and the following packages installed at a minimum - `gptfdisk`, `sudo`/`base-devel`, `dosfstools`, `arch-install-scripts`, `qemu-img`.
+The machine running the build must have internet connectivity and the following packages installed at a minimum - `sudo`/`base-devel`, `dosfstools`, `arch-install-scripts`, `qemu-img`.
 
 ## What's Included
 

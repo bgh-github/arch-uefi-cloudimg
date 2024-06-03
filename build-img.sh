@@ -5,7 +5,7 @@ output_dir=$(dirname "${output_path}")
 output_file=$(basename "${output_path}")
 
 truncate --size=2G "${output_path}"
-sgdisk --align-end --clear --new 0:0:+300M --typecode=0:ef00 --new 0:0:0 --typecode=0:8304 "${output_path}"
+echo -e 'label: gpt\n size=300MiB, type=uefi\n type=4f68bce3-e8cd-4db1-96e7-fbcaf984b709' | sfdisk "${output_path}"
 
 loop_dev=/dev/loop123
 sudo losetup --partscan "${loop_dev}" "${output_path}"
