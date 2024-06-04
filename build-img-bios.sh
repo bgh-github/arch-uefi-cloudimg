@@ -10,7 +10,6 @@ sgdisk --align-end --clear --new 0:0:+1M --typecode=0:ef02 --new 0:0:0 --typecod
 loop_dev=/dev/loop123
 sudo losetup --partscan "${loop_dev}" "${output_path}"
 sudo mkfs.ext4 "${loop_dev}p2"
-sudo partprobe "${loop_dev}"
 
 sudo mount --mkdir "${loop_dev}p2" "${output_dir}/mount/img"
 sudo pacstrap "${output_dir}/mount/img" base linux zram-generator openssh cloud-init cloud-guest-utils grub
