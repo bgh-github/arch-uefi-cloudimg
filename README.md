@@ -171,7 +171,6 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
 
 In either case
 
-* cloud-init should take care of growing the root partition into available space
 * `cloud-config.yml` may include something like
 
   ```yaml
