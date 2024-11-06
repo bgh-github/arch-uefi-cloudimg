@@ -24,7 +24,7 @@ rm /boot/initramfs-linux*.img
 echo '[zram0]' > /etc/systemd/zram-generator.conf
 mkdir /etc/repart.d && echo -e '[Partition]\nType=root' > /etc/repart.d/grow-root.conf
 systemd-firstboot --timezone=UTC
-systemctl enable systemd-networkd.service systemd-resolved.service cloud-init.service cloud-final.service
+systemctl enable systemd-networkd.service systemd-resolved.service cloud-init-main.service cloud-final.service
 sed --in-place --expression='s|\(^\MODULES=\).*|\1(virtio_pci sr_mod)|' --expression='s|\(^HOOKS=(base\)|\1 systemd|' --expression='/^HOOKS=/s| udev||; /^HOOKS=/s| keymap||; /^HOOKS=/s| consolefont||' /etc/mkinitcpio.conf
 sed --in-place --expression='s|\(default_image=\)|#\1|' --expression='s|#\(default_uki=\)|\1|' --expression='s|#\(default_options=\)"\(.*\)"|\1"\2 --no-cmdline"|' --expression='s|\(fallback_image=\)|#\1|' --expression='s|#\(fallback_uki=\)|\1|' --expression='s|\(fallback_options=\)"\(.*\)"|\1"\2 --no-cmdline"|' /etc/mkinitcpio.d/linux.preset
 bootctl install
