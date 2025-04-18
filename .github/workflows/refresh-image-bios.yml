@@ -24,9 +24,9 @@ jobs:
             --sysupgrade \
             --refresh \
             --noconfirm \
-            gptfdisk sudo arch-install-scripts
-      - name: Remove container config preventing pacman.conf extraction into chroot
-        run: sed --in-place --expression='s|\(NoExtract.*\)\( etc/pacman.conf\)|\1|' /etc/pacman.conf
+            sudo arch-install-scripts
+      - name: Restore default (non-container-specific) pacman.conf
+        run: curl --url https://gitlab.archlinux.org/archlinux/packaging/packages/pacman/-/raw/main/pacman.conf > /etc/pacman.conf
       - name: Build image
         run: |
           chmod +x "${{ env.build_script_path }}"
