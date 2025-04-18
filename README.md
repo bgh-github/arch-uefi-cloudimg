@@ -214,8 +214,8 @@ The unfortunate reality is many cloud/VPS providers still only support legacy BI
 For these situations, the rather paradoxically named arch-uefi-cloudimg-bios build is available. This variant includes a minimal set of changes to partitioning etc. and uses GRUB as the boot loader.
 
 ```bash
-img_file=arch-uefi-cloudimg-bios.raw
-# img_file=arch-uefi-cloudimg-bios.raw.gz
+img_file=arch-uefi-cloudimg-bios.qcow2
+# img_file=arch-uefi-cloudimg-bios.raw
 
 cd "${HOME}/Downloads" || exit
 curl --remote-name "https://cdn.bgh.io/${img_file}"

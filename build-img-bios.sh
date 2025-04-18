@@ -28,3 +28,5 @@ echo "BUILD_ID=${output_file}-$(date --utc --iso-8601=minutes)" >> /etc/os-relea
 EOF
 
 sudo umount "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount"
+
+qemu-img convert -c -O qcow2 "${output_path}" "${output_path}.qcow2"

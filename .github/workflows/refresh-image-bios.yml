@@ -13,7 +13,7 @@ jobs:
       options: '--privileged --volume=/dev:/dev'
     env:
       build_script_path: ./build-img-bios.sh
-      output_path: /tmp/arch-uefi-cloudimg-bios.raw
+      output_path: /tmp/arch-uefi-cloudimg-bios
       storage_api_url : https://la.storage.bunnycdn.com/bgh-cdn
     steps:
       - uses: actions/checkout@v4
@@ -24,17 +24,17 @@ jobs:
             --sysupgrade \
             --refresh \
             --noconfirm \
-            sudo arch-install-scripts
+            sudo arch-install-scripts qemu-img
       - name: Restore default (non-container-specific) pacman.conf
         run: curl --url https://gitlab.archlinux.org/archlinux/packaging/packages/pacman/-/raw/main/pacman.conf > /etc/pacman.conf
       - name: Build image
         run: |
           chmod +x "${{ env.build_script_path }}"
           sudo "${{ env.build_script_path }}" "${{ env.output_path }}"
-      - name: Create a gzip copy
+      - name: Include raw image file for upload
         run: |
-          gzip --keep "${{ env.output_path }}"
-          echo "image_paths=${{ env.output_path }} ${{ env.output_path }}.gz" >> $GITHUB_ENV
+          mv "${{ env.output_path }}" "${{ env.output_path }}.raw"
+          echo "image_paths=${{ env.output_path }}.raw ${{ env.output_path }}.qcow2" >> $GITHUB_ENV
       - name: Generate checksums
         run: |
           for image_path in ${image_paths}; do
