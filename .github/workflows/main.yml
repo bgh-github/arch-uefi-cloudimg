@@ -14,7 +14,7 @@ jobs:
     env:
       build_script_path: ./build-img.sh
       output_path: /tmp/arch-uefi-cloudimg
-      storage_api_url : https://la.storage.bunnycdn.com/bgh-cdn
+      storage_api_url : https://syd.storage.bunnycdn.com/bgh-storage
     steps:
       - uses: actions/checkout@v4
       - name: Install build packages
