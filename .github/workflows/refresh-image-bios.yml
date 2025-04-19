@@ -34,7 +34,9 @@ jobs:
       - name: Include raw image file for upload
         run: |
           mv "${{ env.output_path }}" "${{ env.output_path }}.raw"
-          echo "image_paths=${{ env.output_path }}.raw ${{ env.output_path }}.qcow2" >> $GITHUB_ENV
+          cp "${{ env.output_path }}.raw" "${{ env.output_path }}-20g.raw"
+          qemu-img resize -f raw "${{ env.output_path }}-20g.raw" +18G
+          echo "image_paths=${{ env.output_path }}.qcow2 ${{ env.output_path }}.raw ${{ env.output_path }}-20g.raw" >> $GITHUB_ENV
       - name: Generate checksums
         run: |
           for image_path in ${image_paths}; do
