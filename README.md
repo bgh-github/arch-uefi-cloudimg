@@ -31,13 +31,13 @@ The above GitHub Actions workflow automatically refreshes the image around midni
 
 It should also be possible to generate the image locally by executing `./build-img.sh <output_path>` on an Arch-based machine. For example, `./build-img.sh /tmp/arch-uefi-cloudimg`.
 
-The machine running the build must have internet connectivity and the following packages installed at a minimum - `sudo`/`base-devel`, `dosfstools`, `arch-install-scripts`, `qemu-img`.
+The machine running the build must have internet connectivity and the following packages installed at a minimum - `sudo`, `dosfstools`, `arch-install-scripts`, `qemu-img`.
 
 ## What's Included
 
 In short, not much. And that's kind of the idea.
 
-In the Arch [spirit](https://wiki.archlinux.org/title/Arch_Linux#Principles) of simplicity and minimalism, the only packages installed out of the box with arch-uefi-cloudimg are `base`, `linux`, `systemd-ukify`, `zram-generator`, `openssh`, and `cloud-init` (and their dependencies). The main reason arch-uefi-cloudimg exists is to solve a bootstrapping problem. Its job is really to do just enough to facilitate VM boot and early initialisation, at which point a full configuration management solution would take over.
+Keeping to the do-it-yourself nature and Arch [spirit](https://wiki.archlinux.org/title/Arch_Linux#Principles) of simplicity, the only packages installed out of the box with arch-uefi-cloudimg are `base`, `linux`, `systemd-ukify`, `zram-generator`, `openssh`, and `cloud-init` (and their dependencies). The main reason arch-uefi-cloudimg exists is to solve a bootstrapping problem. Its job is really to do just enough to facilitate VM boot and early initialisation, at which point a full configuration management solution would take over.
 
 Typically, the VM provisioning process would go something like
 
