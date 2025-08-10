@@ -1,14 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 output_path="${1}"
 output_dir=$(dirname "${output_path}")
-output_file=$(basename "${output_path}")
 
 truncate --size=2G "${output_path}"
 echo -e 'label: gpt\n size=1MiB, type=21686148-6449-6e6f-744e-656564454649\n type=4f68bce3-e8cd-4db1-96e7-fbcaf984b709, attrs=59' | sfdisk "${output_path}"
 
-loop_dev=/dev/loop123
-sudo losetup --partscan "${loop_dev}" "${output_path}"
+loop_dev=$(sudo losetup --partscan --show --find "${output_path}")
 sudo mkfs.ext4 "${loop_dev}p2"
 
 sudo mount --mkdir "${loop_dev}p2" "${output_dir}/mount/img"
@@ -24,9 +22,9 @@ mkinitcpio --allpresets
 grub-install --target=i386-pc "${loop_dev}"
 grub-mkconfig --output=/boot/grub/grub.cfg
 sed --in-place --expression='s|.*|uninitialized|' /etc/machine-id
-echo "BUILD_ID=${output_file}-$(date --utc --iso-8601=minutes)" >> /etc/os-release
+echo "BUILD_ID=$(basename "${output_path}")-$(date --utc --iso-8601=minutes)" >> /etc/os-release
 EOF
 
-sudo umount "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount"
+sudo umount "${output_dir}/mount/img" && sudo rmdir "${_}" && sudo rmdir "${output_dir}/mount"
 
 qemu-img convert -c -O qcow2 "${output_path}" "${output_path}.qcow2"

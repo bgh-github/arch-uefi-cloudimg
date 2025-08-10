@@ -1,14 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 output_path="${1}"
 output_dir=$(dirname "${output_path}")
-output_file=$(basename "${output_path}")
 
 truncate --size=2G "${output_path}"
 echo -e 'label: gpt\n size=300MiB, type=uefi\n type=4f68bce3-e8cd-4db1-96e7-fbcaf984b709, attrs=59' | sfdisk "${output_path}"
 
-loop_dev=/dev/loop123
-sudo losetup --partscan "${loop_dev}" "${output_path}"
+loop_dev=$(sudo losetup --partscan --show --find "${output_path}")
 sudo mkfs.fat -F 32 "${loop_dev}p1"
 sudo mkfs.ext4 "${loop_dev}p2"
 
@@ -30,11 +28,11 @@ sed --in-place --expression='s|\(default_image=\)|#\1|' --expression='s|#\(defau
 bootctl install
 mkinitcpio --allpresets
 sed --in-place --expression='s|.*|uninitialized|' /etc/machine-id
-echo "BUILD_ID=${output_file}-$(date --utc --iso-8601=minutes)" >> /etc/os-release
+echo "BUILD_ID=$(basename "${output_path}")-$(date --utc --iso-8601=minutes)" >> /etc/os-release
 EOF
 
-sudo umount "${output_dir}/mount/img/efi" && sudo rmdir "${output_dir}/mount/img/efi"
-sudo umount "${output_dir}/mount/efi" && sudo rmdir "${output_dir}/mount/efi"
-sudo umount "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount/img" && sudo rmdir "${output_dir}/mount"
+sudo umount "${output_dir}/mount/img/efi" && sudo rmdir "${_}"
+sudo umount "${output_dir}/mount/efi" && sudo rmdir "${_}"
+sudo umount "${output_dir}/mount/img" && sudo rmdir "${_}" && sudo rmdir "${output_dir}/mount"
 
 qemu-img convert -c -O qcow2 "${output_path}" "${output_path}.qcow2"
