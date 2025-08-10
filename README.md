@@ -64,7 +64,7 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
   scp cloud-config.yml "${pve}:/var/lib/vz/snippets/cloud-config.yml"
   ```
 
-  Use PVE host shell to create VM, set cloud-init values, import image, and boot
+  Use PVE host shell to create VM, set cloud-init values, and boot
 
   ```bash
   storage=local-zfs
@@ -87,9 +87,9 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
     --ostype l26 \
     --machine q35 \
     --bios ovmf \
-    --efidisk0 "${storage}:0" \
-    --scsihw virtio-scsi-pci \
-    --scsi0 "${storage}:0,import-from=/var/lib/vz/images/arch-uefi-cloudimg.qcow2" \
+    --efidisk0 "${storage}:0,efitype=4m" \
+    --scsihw virtio-scsi-single \
+    --scsi0 "${storage}:0,import-from=/var/lib/vz/images/arch-uefi-cloudimg.qcow2,discard=on,iothread=1" \
     --bootdisk scsi0 \
     --boot c \
     --net0 virtio,bridge=vmbr0,tag=3 \
@@ -99,8 +99,9 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
     --ipconfig0 "ip=${ip},gw=${gw}" \
     --ciuser "${user}" \
     --sshkeys /tmp/sshkeys \
-    --cicustom "vendor=local:snippets/cloud-config.yml"
-    #--nameserver and --searchdomain automatically inherit host settings if not specified
+    --cicustom "vendor=local:snippets/cloud-config.yml" \
+    --tpmstate0 "${storage}:0,version=v2.0"
+    # --nameserver and --searchdomain automatically inherit host settings if not specified
 
   qm resize "${vmid}" scsi0 20G
   qm start "${vmid}"
@@ -153,16 +154,20 @@ With the image downloaded (and verified), it's now time to spin up a VM. Command
 
   ```bash
   qemu-img resize arch-uefi-cloudimg.qcow2 20G
+  cp /usr/share/edk2/x64/OVMF_VARS.4m.fd .
+
   qemu-system-x86_64 \
     -enable-kvm \
     -cpu host \
     -smp cores=2 \
     -m 2G \
     -machine q35 \
-    -drive if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF_CODE.fd \
-    -device virtio-scsi-pci \
+    -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
+    -drive if=pflash,format=raw,file=OVMF_VARS.4m.fd \
+    -object iothread,id=iothread0 \
+    -device virtio-scsi-pci,iothread=iothread0 \
     -device scsi-hd,drive=scsi0 \
-    -drive file=arch-uefi-cloudimg.qcow2,if=none,id=scsi0 \
+    -drive file=arch-uefi-cloudimg.qcow2,if=none,id=scsi0,discard=unmap \
     -nic user,model=virtio-net-pci \
     -cdrom cloud-init.iso
   ```
