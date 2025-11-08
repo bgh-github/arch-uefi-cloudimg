@@ -23,7 +23,7 @@ echo '[zram0]' > /etc/systemd/zram-generator.conf
 mkdir /etc/repart.d && echo -e '[Partition]\nType=root' > /etc/repart.d/grow-root.conf
 systemd-firstboot --timezone=UTC
 systemctl enable systemd-networkd.service systemd-resolved.service cloud-init-main.service cloud-final.service
-sed --in-place --expression='/^MODULES=/s|()|(virtio_pci sr_mod)|' /etc/mkinitcpio.conf
+sed --in-place --expression='/^MODULES=/s|()|(sr_mod)|' /etc/mkinitcpio.conf
 sed --in-place --expression='/^default_image=/s|^|#|' --expression='/^#default_uki=/s|^#||' --expression='s|#\(default_options=\)"\(.*\)"|\1"\2 --no-cmdline"|' /etc/mkinitcpio.d/linux.preset
 bootctl install
 mkinitcpio --preset linux
