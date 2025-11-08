@@ -17,8 +17,8 @@ echo '[zram0]' > /etc/systemd/zram-generator.conf
 mkdir /etc/repart.d && echo -e '[Partition]\nType=root' > /etc/repart.d/grow-root.conf
 systemd-firstboot --timezone=UTC
 systemctl enable systemd-networkd.service systemd-resolved.service cloud-init-main.service cloud-final.service
-sed --in-place --expression='s|\(^\MODULES=\).*|\1(virtio_pci sr_mod)|' --expression='s|\(^HOOKS=(base\)|\1 systemd|' --expression='/^HOOKS=/s| udev||; /^HOOKS=/s| keymap||; /^HOOKS=/s| consolefont||' /etc/mkinitcpio.conf
-mkinitcpio --allpresets
+sed --in-place --expression='/^MODULES=/s|()|(virtio_pci sr_mod)|' /etc/mkinitcpio.conf
+mkinitcpio --preset linux
 grub-install --target=i386-pc "${loop_dev}"
 grub-mkconfig --output=/boot/grub/grub.cfg
 sed --in-place --expression='s|.*|uninitialized|' /etc/machine-id
