@@ -1,3 +1,6 @@
+> [!WARNING]
+> This repository has moved. Its new home is https://git.bgh.io/bgh/arch-uefi-cloudimg
+
 # Arch UEFI Cloud Image (arch-uefi-cloudimg)
 
 A (unofficial) minimal, [cloud-init](https://cloudinit.readthedocs.io) enabled [Arch Linux](https://archlinux.org) virtual machine image build for UEFI booting on latest generation VM hardware.
